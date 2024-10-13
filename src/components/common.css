@@ -1,0 +1,65 @@
+:root {
+    --border-color: #ccc;
+}
+
+.board {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.block {
+    border: 1px solid var(--border-color);
+    margin: 4px;
+}
+
+.cell {
+    --cell-size: 48px;
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: 500;
+    cursor: default;
+}
+
+.highlighted {
+    background-color: #ffeecc;
+    color: black;
+}
+
+.secondary-highlight {
+    background-color: #669;
+}
+
+.tertiary-highlight {
+    background-color: #444;
+}
+
+.single-value {
+    background-color: #665544;
+    color: #999;
+    font-weight: 100;
+}
+
+.possible-values {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    font-size: 22px;
+}
+
+.clear-button {
+    margin: 8px;
+    gap: 8px;
+    font-size: 22px;
+}
