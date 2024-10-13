@@ -4,6 +4,7 @@ import { useContext, useEffect, useRef } from "react";
 import { GameContext } from "./GameContext";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { Location } from "../logic/state";
+import { localSearch } from "../logic/solvers";
 
 export function Board() {
   // TODO: reset/clear button
@@ -33,12 +34,8 @@ export function Board() {
 
   return (
     <>
-      <input
-        type="button"
-        className="clear-button"
-        value="Clear"
-        onClick={() => game.clear()}
-      />
+      <input type="button" value="Clear" onClick={() => game.clear()} />
+      <input type="button" value="Solve" onClick={() => localSearch(game)} />
       <div className="board" ref={ref}>
         {oneTwoThree.map((row) => (
           <div className="row" key={`board-row-${row}`}>

@@ -28,7 +28,13 @@ type constraintChecker = (
   game: Game,
   location: Location,
   value: number
-) => boolean;
+) => number;
+
+const checkers: constraintChecker[] = [
+  numSameValueInBlock,
+  numSameValueInRow,
+  numSameValueInCol,
+];
 
 export class Game {
   private values: (number | null)[] = new Array(9 * 9).fill(null);
@@ -68,7 +74,6 @@ export class Game {
   }
 
   private updateAvailableValues() {
-    console.trace("updateAvailableValues");
     this.availableValues = new Array(9 * 9).fill([]);
     // Prime the available values, leaving ones that don't violate any constraints
     this.visitAll((location) => {
@@ -119,7 +124,7 @@ export class Game {
     }
   }
 
-  private visitAll(callback: (location: Location) => void) {
+  public visitAll(callback: (location: Location) => void) {
     for (let row = 1; row <= 9; row++) {
       for (let col = 1; col <= 9; col++) {
         callback(new Location(col, row));
@@ -132,12 +137,20 @@ export class Game {
   }
 
   public satisfiesAllConstraints(location: Location, value: number) {
-    const checkers: constraintChecker[] = [
-      isUniqueInBlock,
-      isUniqueInRow,
-      isUniqueInCol,
-    ];
-    return checkers.every((checker) => checker(this, location, value));
+    return checkers.every((checker) => checker(this, location, value) === 0);
+  }
+
+  public countConflicts(location: Location, value: number | null = null) {
+    let numConflicts = 0;
+    if (!value) {
+      value = this.get(location);
+    }
+    if (value) {
+      for (const checker of checkers) {
+        numConflicts += checker(this, location, value);
+      }
+    }
+    return numConflicts;
   }
 
   public getOtherValuesInBlock(location: Location) {
@@ -199,17 +212,27 @@ export class Game {
   }
 }
 
-function isUniqueInBlock(game: Game, location: Location, value: number) {
+function numSameValueInBlock(game: Game, location: Location, value: number) {
   const otherValuesInBlock = game.getOtherValuesInBlock(location);
-  return !otherValuesInBlock.includes(value);
+  return countOccurrences(otherValuesInBlock, value);
 }
 
-function isUniqueInRow(game: Game, location: Location, value: number) {
+function numSameValueInRow(game: Game, location: Location, value: number) {
   const otherValuesInRow = game.getOtherValuesInRow(location);
-  return !otherValuesInRow.includes(value);
+  return countOccurrences(otherValuesInRow, value);
 }
 
-function isUniqueInCol(game: Game, location: Location, value: number) {
+function numSameValueInCol(game: Game, location: Location, value: number) {
   const otherValuesInCol = game.getOtherValuesInCol(location);
-  return !otherValuesInCol.includes(value);
+  return countOccurrences(otherValuesInCol, value);
+}
+
+function countOccurrences(values: readonly number[], value: number) {
+  let result = 0;
+  for (const otherValue of values) {
+    if (otherValue === value) {
+      result++;
+    }
+  }
+  return result;
 }
