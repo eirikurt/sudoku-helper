@@ -34,6 +34,11 @@ export function Cell({ location }: Props) {
     );
   }, [selectedValue, game, location]);
 
+  const isConflicted = useMemo(() => {
+    return value && !game.satisfiesAllConstraints(location, value);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lastWrite]);
+
   const isSelected = location.toString() === selectedCell;
   const classes = {
     cell: true,
@@ -41,6 +46,7 @@ export function Cell({ location }: Props) {
     "single-value": !isSelected && singleAvailableValue,
     "secondary-highlight": !isSelected && sameAsSelectedValue,
     "tertiary-highlight": !isSelected && intersectsSelectedValue,
+    conflicted: !isSelected && isConflicted,
   };
   return (
     <div

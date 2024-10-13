@@ -63,3 +63,8 @@
     gap: 8px;
     font-size: 22px;
 }
+
+.conflicted {
+    background-color: #e22;
+    color: black;
+}

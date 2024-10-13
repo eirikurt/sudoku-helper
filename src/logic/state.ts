@@ -131,7 +131,7 @@ export class Game {
     return this.availableValues[this.toIndex(location)];
   }
 
-  private satisfiesAllConstraints(location: Location, value: number) {
+  public satisfiesAllConstraints(location: Location, value: number) {
     const checkers: constraintChecker[] = [
       isUniqueInBlock,
       isUniqueInRow,
