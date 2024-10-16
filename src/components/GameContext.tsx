@@ -21,6 +21,7 @@ export const GameProvider = ({ children }: { children: React.ReactNode }) => {
 
   const gameRef = useRef<Game>(null);
   if (gameRef.current === null) {
+    // @ts-expect-error This is fine. The ref is mutable and this is the pattern the React docs suggest when construction is expensive
     gameRef.current = new Game(() => setLastWrite(Date.now()));
   }
 
