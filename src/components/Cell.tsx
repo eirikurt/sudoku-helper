@@ -43,7 +43,7 @@ export function Cell({ location }: Props) {
   const classes = {
     cell: true,
     highlighted: isSelected,
-    "has-value": !!value && !isSelected,
+    "has-value": !!value && !isSelected && !sameAsSelectedValue,
     "single-value": !isSelected && singleAvailableValue,
     "secondary-highlight": !isSelected && sameAsSelectedValue,
     "tertiary-highlight": !isSelected && intersectsSelectedValue,
