@@ -4,10 +4,18 @@ import { useContext, useEffect, useRef } from "react";
 import { GameContext } from "./GameContext";
 import { useClickOutside } from "../hooks/useClickOutside";
 import { Location } from "../logic/state";
-import { localSearch } from "../logic/solvers";
+import { safeBets } from "../logic/solvers";
+
+type ArrowKeys = "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown";
+const arrowKeyModifiers: Record<ArrowKeys, Location> = {
+  ArrowLeft: new Location(-1, 0),
+  ArrowRight: new Location(1, 0),
+  ArrowUp: new Location(0, -1),
+  ArrowDown: new Location(0, 1),
+};
 
 export function Board() {
-  // TODO: reset/clear button
+  // TODO: undo/redo
   const ref = useRef<HTMLDivElement>(null);
   const { game, selectedCell, setSelectedCell } = useContext(GameContext);
   useClickOutside(ref, () => setSelectedCell(null));
@@ -15,12 +23,23 @@ export function Board() {
     function keyDownHandler(event: KeyboardEvent) {
       if (selectedCell) {
         const location = Location.fromString(selectedCell);
-        // TODO: arrow keys to move selection
         const numberString = "123456789";
         if (numberString.includes(event.key)) {
           game.set(location, parseInt(event.key));
         } else if (event.key === "Backspace") {
           game.set(location, null);
+        } else if (event.key === "Escape") {
+          setSelectedCell(null);
+        } else if (event.key in arrowKeyModifiers) {
+          const modification = arrowKeyModifiers[event.key as ArrowKeys];
+          const currentLocation = Location.fromString(selectedCell);
+          const newLocation = new Location(
+            currentLocation.col + modification.col,
+            currentLocation.row + modification.row
+          );
+          if (newLocation.isValid) {
+            setSelectedCell(newLocation.toString());
+          }
         }
       }
     }
@@ -34,8 +53,8 @@ export function Board() {
 
   return (
     <>
-      <input type="button" value="Clear" onClick={() => game.clear()} />
-      <input type="button" value="Solve" onClick={() => localSearch(game)} />
+      <button onClick={() => game.clear()}>Clear</button>
+      <button onClick={() => safeBets(game)}>Solve</button>
       <div className="board" ref={ref}>
         {oneTwoThree.map((row) => (
           <div className="row" key={`board-row-${row}`}>

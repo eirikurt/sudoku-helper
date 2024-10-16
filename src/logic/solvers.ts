@@ -1,11 +1,6 @@
 import { Game, Location } from "./state";
 
-export function localSearch(game: Game) {
-  const allLocations: Location[] = [];
-  game.visitAll((location) => {
-    allLocations.push(location);
-  });
-
+export function safeBets(game: Game) {
   // Pick unique values
   let uniqueValuesAvailable = true;
   while (uniqueValuesAvailable) {
@@ -20,6 +15,13 @@ export function localSearch(game: Game) {
       }
     });
   }
+}
+
+export function localSearch(game: Game) {
+  const allLocations: Location[] = [];
+  game.visitAll((location) => {
+    allLocations.push(location);
+  });
 
   const openLocations = allLocations.filter((location) => !game.get(location));
 

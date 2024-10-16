@@ -22,6 +22,10 @@ export class Location {
       Math.floor((this.row - 1) / 3) + 1
     );
   }
+
+  get isValid(): boolean {
+    return this.col >= 1 && this.col <= 9 && this.row >= 1 && this.row <= 9;
+  }
 }
 
 type constraintChecker = (
@@ -103,6 +107,13 @@ export class Game {
         const rowLocations = this.getLocationsInRow(location.row);
         const colLocations = this.getLocationsInCol(location.col);
         for (const locations of [blockLocations, rowLocations, colLocations]) {
+          // Actually, there's a generalization of this rule that applies to any partition of the set of available values
+          // such that if
+          // a) the partition appears in exactly N locations where N equals the size of the partition
+          // b) no value in the partition appears in any other location
+          // then values outside of the partition can be excluded.
+          // This is essentially the pigeonhole principle.
+          // TODO: Implement!
           const otherAvailableValues = locations
             .filter((l) => !l.equals(location))
             .map((l) => this.getAvailableValues(l))
@@ -120,6 +131,16 @@ export class Game {
             }
           }
         }
+
+        /* TODO: Implement the following check
+        For each block
+          Find the set of available values within each row/col
+          For each row/col
+            For each available value in the current row/col
+              If the value is not in the available set for the other rows/cols
+                Remove the value from other cells in the current row/col in other blocks
+          
+        */
       });
     }
   }
