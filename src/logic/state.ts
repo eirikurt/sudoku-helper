@@ -92,6 +92,8 @@ export class Game {
       }
     });
 
+    this.clamping();
+
     let allSettled = false;
     while (!allSettled) {
       allSettled = true;
@@ -131,17 +133,86 @@ export class Game {
             }
           }
         }
-
-        /* TODO: Implement the following check
-        For each block
-          Find the set of available values within each row/col
-          For each row/col
-            For each available value in the current row/col
-              If the value is not in the available set for the other rows/cols
-                Remove the value from other cells in the current row/col in other blocks
-          
-        */
       });
+    }
+  }
+
+  private clamping() {
+    // for each block
+    for (const startCol of [1, 4, 7]) {
+      for (const startRow of [1, 4, 7]) {
+        // find the set of available values within each row/col
+        const byColumn: Set<number>[] = [];
+        const byRow: Set<number>[] = [];
+        for (const x of [0, 1, 2]) {
+          byColumn.push(new Set());
+          byRow.push(new Set());
+          for (const y of [0, 1, 2]) {
+            this.getAvailableValues(
+              new Location(startCol + x, startRow + y)
+            ).forEach((value) => {
+              byColumn[x].add(value);
+            });
+            this.getAvailableValues(
+              new Location(startCol + y, startRow + x)
+            ).forEach((value) => {
+              byRow[x].add(value);
+            });
+          }
+        }
+        //console.info({ startCol, startRow, byColumn, byRow });
+        // For each row/col
+        for (const x of [0, 1, 2]) {
+          // For each available value in the current row/col
+          for (const value of byColumn[x]) {
+            // If the value is not in the available set for the other rows/cols
+            const others = [byColumn[(x + 1) % 3], byColumn[(x + 2) % 3]];
+            if (others.every((set) => !set.has(value))) {
+              const locationsToClear = this.getLocationsInCol(
+                startCol + x
+              ).filter((l) => l.row < startRow || l.row > startRow + 2);
+              console.info({
+                others,
+                startCol,
+                startRow,
+                x,
+                value,
+                locationsToClear,
+              });
+              for (const location of locationsToClear) {
+                this.availableValues[this.toIndex(location)] =
+                  this.availableValues[this.toIndex(location)].filter(
+                    (v) => v !== value
+                  );
+              }
+            }
+          }
+
+          for (const value of byRow[x]) {
+            // If the value is not in the available set for the other rows/cols
+            const others = [byRow[(x + 1) % 3], byRow[(x + 2) % 3]];
+            if (others.every((set) => !set.has(value))) {
+              const locationsToClear = this.getLocationsInRow(
+                startRow + x
+              ).filter((l) => l.col < startCol || l.col > startCol + 2);
+              console.info({
+                others,
+                startCol,
+                startRow,
+                x,
+                value,
+                locationsToClear,
+              });
+              for (const location of locationsToClear) {
+                this.availableValues[this.toIndex(location)] =
+                  this.availableValues[this.toIndex(location)].filter(
+                    (v) => v !== value
+                  );
+              }
+            }
+          }
+        }
+      }
     }
   }
 
