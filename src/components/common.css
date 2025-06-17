@@ -1,11 +1,25 @@
 :root {
     --border-color: #ccc;
+    --cell-font-size: 24px;
+    --other-font-size: 22px;
+}
+
+@media only screen and (max-width: 600px) {
+  :root {
+    --cell-font-size: 4vmin;
+    --other-font-size: 3vmin;
+  }
+  h1 {
+    font-size: 8vmin !important;
+    line-height: 1 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0.2em !important;
+  }
 }
 
 .board {
     border: 1px solid var(--border-color);
     border-radius: 4px;
-
 }
 
 .row {
@@ -19,14 +33,14 @@
 }
 
 .cell {
-    --cell-size: 48px;
+    --cell-size: 2em;
     width: var(--cell-size);
     height: var(--cell-size);
     border: 1px solid var(--border-color);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
+    font-size: var(--cell-font-size);
     font-weight: 500;
     cursor: default;
 }
@@ -51,17 +65,17 @@
 }
 
 .possible-values {
-    margin-top: 8px;
+    margin-top: 0.3em;
     display: flex;
     flex-direction: row;
-    gap: 8px;
-    font-size: 22px;
+    gap: 0.3em;
+    font-size: var(--other-font-size);
 }
 
 .clear-button {
-    margin: 8px;
-    gap: 8px;
-    font-size: 22px;
+    margin: 0.3em;
+    gap: 0.3em;
+    font-size: var(--other-font-size);
 }
 
 .conflicted {
