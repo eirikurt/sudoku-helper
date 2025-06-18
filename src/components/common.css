@@ -86,3 +86,8 @@
 .has-value {
     background-color: #335;
 }
+
+.cell-input {
+    position: absolute;
+    opacity: 0;
+}

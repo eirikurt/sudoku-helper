@@ -55,6 +55,34 @@ export function Cell({ location }: Props) {
       onClick={() => setSelectedCell(location.toString())}
     >
       {singleAvailableValue ? game.getAvailableValues(location)[0] : value}
+      {isSelected && (
+        <input
+          className="cell-input"
+          type="number"
+          pattern="[1-9]"
+          maxLength={1}
+          autoFocus
+          onBlur={() => setSelectedCell(null)}
+          value={value ?? ""}
+          onChange={(e) => {
+            if (e.target.value === "") {
+              game.set(location, null);
+            } else if (e.target.value.length === 1) {
+              try {
+                game.set(location, parseInt(e.target.value));
+                e.preventDefault();
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+              e.preventDefault();
+            }
+          }}
+        />
+      )}
     </div>
   );
 }
